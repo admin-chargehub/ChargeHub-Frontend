@@ -19,6 +19,12 @@ export type OutletOut = components["schemas"]["OutletOut"];
 export type AvailabilityQuery = components["schemas"]["AvailabilityQuery"];
 export type AvailabilityResponse = components["schemas"]["AvailabilityResponse"];
 export type OutletStatus = components["schemas"]["OutletStatus"];
+export type PlanOut = components["schemas"]["PlanOut"];
+export type BookingOut = components["schemas"]["BookingOut"];
+export type BookingCreate = components["schemas"]["BookingCreate"];
+export type BookingStatus = components["schemas"]["BookingStatus"];
+export type SessionOut = components["schemas"]["SessionOut"];
+export type SessionStatus = components["schemas"]["SessionStatus"];
 
 const BASE = import.meta.env.VITE_API_URL ?? "";
 const TOKEN_KEY = "chargehub.token";
@@ -94,6 +100,45 @@ export const api = {
   listStations: () => request<StationOut[]>("/stations"),
 
   getStation: (id: string) => request<StationDetailOut>(`/stations/${id}`),
+
+  listPlans: () => request<PlanOut[]>("/plans"),
+
+  /**
+   * Hold an outlet. `idempotencyKey` travels as a header so a double-tap on a
+   * flaky connection returns the same booking instead of creating a second one.
+   */
+  createBooking: (body: BookingCreate, idempotencyKey: string) =>
+    request<BookingOut>("/bookings", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Idempotency-Key": idempotencyKey },
+    }),
+
+  listBookings: () => request<BookingOut[]>("/bookings"),
+
+  getBooking: (id: string) => request<BookingOut>(`/bookings/${id}`),
+
+  /** Returns the booking with its access code — the one response that carries it. */
+  payBooking: (id: string) =>
+    request<BookingOut>(`/bookings/${id}/pay`, { method: "POST" }),
+
+  /**
+   * Present an access code at a hub. This is the station's endpoint — the code
+   * is the credential, so it takes no bearer token. Called from the app only
+   * because there is no keypad yet.
+   */
+  redeemCode: (stationSlug: string, code: string) =>
+    request<SessionOut>("/sessions/redeem", {
+      method: "POST",
+      body: JSON.stringify({ station_slug: stationSlug, code }),
+    }),
+
+  getSession: (id: string) => request<SessionOut>(`/sessions/${id}`),
+
+  activeSession: () => request<SessionOut | null>("/sessions/active"),
+
+  endSession: (id: string) =>
+    request<SessionOut>(`/sessions/${id}/end`, { method: "POST" }),
 
   checkAvailability: (id: string, body: AvailabilityQuery) =>
     request<AvailabilityResponse>(`/stations/${id}/availability`, {

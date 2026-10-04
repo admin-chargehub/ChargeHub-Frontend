@@ -1,9 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-NG">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f766e" />
+    <!-- viewport-fit=cover is load-bearing: without it env(safe-area-inset-*)
+         resolves to 0px and every safe-area rule in index.css silently does
+         nothing, while still looking correct in desktop DevTools. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Two variants so the status bar tracks the theme the CSS already implements. -->
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0e1116" media="(prefers-color-scheme: dark)" />
+
+    <meta name="description" content="Book smart charging outlets at ChargeHub hubs near you." />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <!-- iOS ignores the manifest icons for Add to Home Screen; without this it
+         uses a blurry screenshot of the page instead. -->
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="ChargeHub" />
+
     <title>ChargeHub</title>
   </head>
   <body>

@@ -55,6 +55,173 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/plans": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Plans
+         * @description Tariff plans offered to customers, cheapest first.
+         *
+         *     The `plans` table has existed since the initial schema but was unreachable
+         *     over the API until now, which is why the booking UI had nothing to show.
+         */
+        get: operations["list_plans_api_v1_plans_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Bookings */
+        get: operations["list_bookings_api_v1_bookings_get"];
+        put?: never;
+        /**
+         * Create Booking
+         * @description Hold an outlet. The booking is PENDING and expires if it isn't paid for.
+         */
+        post: operations["create_booking_api_v1_bookings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Booking */
+        get: operations["get_booking_api_v1_bookings__booking_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/bookings/{booking_id}/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Pay Booking
+         * @description Pay for a pending booking and receive the access code.
+         *
+         *     The code is returned in full here — this is the one response that carries
+         *     it. Afterwards it is only readable through the booking detail route, and
+         *     only until it expires.
+         */
+        post: operations["pay_booking_api_v1_bookings__booking_id__pay_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sessions/redeem": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Redeem
+         * @description Open a session by presenting an access code — the station's entry point.
+         *
+         *     Deliberately unauthenticated: the code *is* the credential, exactly as it
+         *     is on a keypad. When the HGC exists this moves behind mutual-TLS device
+         *     identity and the station, not the customer's phone, will be the caller.
+         */
+        post: operations["redeem_api_v1_sessions_redeem_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sessions/active": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Active Session
+         * @description The caller's running session, if any — drives the Home screen banner.
+         */
+        get: operations["active_session_api_v1_sessions_active_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sessions/{session_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Session */
+        get: operations["get_session_api_v1_sessions__session_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/sessions/{session_id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * End Session
+         * @description Stop early. The customer keeps paying the flat plan price — see the
+         *     receipt note on the billing model.
+         */
+        post: operations["end_session_api_v1_sessions__session_id__end_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/stations": {
         parameters: {
             query?: never;
@@ -186,6 +353,86 @@ export interface components {
              */
             wait_minutes?: number | null;
         };
+        /** BookingCreate */
+        BookingCreate: {
+            /**
+             * Outlet Id
+             * Format: uuid
+             */
+            outlet_id: string;
+            /**
+             * Plan Id
+             * Format: uuid
+             */
+            plan_id: string;
+        };
+        /** BookingOut */
+        BookingOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            status: components["schemas"]["BookingStatus"];
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Amount Kobo */
+            amount_kobo: number;
+            /** Pending Expires At */
+            pending_expires_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            outlet: components["schemas"]["BookingOutletOut"];
+            station: components["schemas"]["BookingStationOut"];
+            plan: components["schemas"]["PlanOut"];
+            /**
+             * Access Code
+             * @description The 10-digit code, formatted for display. Null until the booking is paid for, and null again once it expires.
+             */
+            access_code?: string | null;
+        };
+        /** BookingOutletOut */
+        BookingOutletOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Index */
+            index: number;
+            /** Label */
+            label: string | null;
+        };
+        /** BookingStationOut */
+        BookingStationOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /** Address */
+            address: string | null;
+        };
+        /**
+         * BookingStatus
+         * @enum {string}
+         */
+        BookingStatus: "pending" | "confirmed" | "active" | "completed" | "cancelled" | "expired";
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -221,6 +468,49 @@ export interface components {
          * @enum {string}
          */
         OutletStatus: "available" | "in_use" | "reserved" | "fault" | "offline" | "maintenance";
+        /**
+         * PlanOut
+         * @description A tariff plan as the booking UI needs it.
+         *
+         *     Money is in kobo throughout — integers, never floats. The client formats;
+         *     the server never sends a pre-formatted "₦1,000".
+         */
+        PlanOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /** Power Cap W */
+            power_cap_w: number;
+            /** Energy Cap Wh */
+            energy_cap_wh: number;
+            /** Max Duration Minutes */
+            max_duration_minutes: number;
+            /** Price Kobo */
+            price_kobo: number;
+            /** Recommended Devices */
+            recommended_devices: string | null;
+        };
+        /**
+         * RedeemRequest
+         * @description What the station keypad sends. Eventually this comes over MQTT from the
+         *     HGC; for now it is an HTTP call so the flow can be exercised without
+         *     hardware.
+         */
+        RedeemRequest: {
+            /** Station Slug */
+            station_slug: string;
+            /**
+             * Code
+             * @description Accepts the XXXXX-XXXXX display form.
+             */
+            code: string;
+        };
         /** RegisterRequest */
         RegisterRequest: {
             /**
@@ -235,6 +525,73 @@ export interface components {
             /** Phone */
             phone?: string | null;
         };
+        /**
+         * SessionEndReason
+         * @enum {string}
+         */
+        SessionEndReason: "time_expired" | "user_ended" | "energy_cap" | "power_cap" | "idle_timeout" | "fault" | "operator_ended";
+        /** SessionOut */
+        SessionOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            status: components["schemas"]["SessionStatus"];
+            end_reason: components["schemas"]["SessionEndReason"] | null;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Ended At */
+            ended_at: string | null;
+            /**
+             * Server Now
+             * Format: date-time
+             * @description The server's clock at the moment of this response. Clients should offset their countdown by (server_now - client_now) so a wrong device clock doesn't show the wrong time remaining.
+             */
+            server_now: string;
+            /** Remaining Seconds */
+            remaining_seconds: number;
+            /** Elapsed Seconds */
+            elapsed_seconds: number;
+            /**
+             * Energy Wh
+             * @description Cumulative energy this session, in watt-hours — not kilowatt-hours.
+             */
+            energy_wh: number;
+            /** Power W */
+            power_w: number | null;
+            /** Cost Kobo */
+            cost_kobo: number;
+            /**
+             * Simulated
+             * @description True when the energy figures are fabricated because no station telemetry exists yet. Never true in production.
+             */
+            simulated: boolean;
+            outlet: components["schemas"]["BookingOutletOut"];
+            station: components["schemas"]["BookingStationOut"];
+            /** Plan Name */
+            plan_name: string;
+            /** Customer Name */
+            customer_name: string;
+        };
+        /**
+         * SessionStatus
+         * @enum {string}
+         */
+        SessionStatus: "active" | "completed";
         /** StationDetailOut */
         StationDetailOut: {
             /**
@@ -426,6 +783,269 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["UserOut"];
+                };
+            };
+        };
+    };
+    list_plans_api_v1_plans_get: {
+        parameters: {
+            query?: {
+                active_only?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlanOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_bookings_api_v1_bookings_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"][];
+                };
+            };
+        };
+    };
+    create_booking_api_v1_bookings_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BookingCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_booking_api_v1_bookings__booking_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    pay_booking_api_v1_bookings__booking_id__pay_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BookingOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    redeem_api_v1_sessions_redeem_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RedeemRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    active_session_api_v1_sessions_active_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"] | null;
+                };
+            };
+        };
+    };
+    get_session_api_v1_sessions__session_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    end_session_api_v1_sessions__session_id__end_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
