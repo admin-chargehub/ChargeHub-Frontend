@@ -5,15 +5,17 @@ import { Link } from "react-router-dom";
 import { api, type StationOut } from "@/api/client";
 import { useAuth } from "@/auth/AuthContext";
 import { PinIcon } from "@/components/icons";
+import { LocationButton } from "@/components/LocationSheet";
 import { ThemeToggleButton } from "@/components/ThemeToggle";
 import { formatDistance } from "@/lib/format";
-import { haversineKm, useGeolocation } from "@/lib/geo";
+import { haversineKm } from "@/lib/geo";
+import { useLocation } from "@/location/LocationContext";
 
 type WithDistance = StationOut & { distanceKm: number | null };
 
 export default function HomePage() {
   const { user } = useAuth();
-  const geo = useGeolocation();
+  const { origin } = useLocation();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["stations"],
@@ -27,16 +29,16 @@ export default function HomePage() {
     const list = (data ?? []).map((s) => ({
       ...s,
       distanceKm:
-        geo.coords && s.latitude != null && s.longitude != null
-          ? haversineKm(geo.coords, { lat: s.latitude, lng: s.longitude })
+        origin && s.latitude != null && s.longitude != null
+          ? haversineKm(origin, { lat: s.latitude, lng: s.longitude })
           : null,
     }));
-    // Only re-sort when we actually have a position; otherwise keep the
+    // Only re-sort when we actually have an origin; otherwise keep the
     // server's ordering rather than shuffling for no reason.
-    return geo.coords
+    return origin
       ? [...list].sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity))
       : list;
-  }, [data, geo.coords]);
+  }, [data, origin]);
 
   const firstName = user?.full_name?.split(" ")[0];
 
@@ -50,11 +52,7 @@ export default function HomePage() {
         <ThemeToggleButton />
       </header>
 
-      {geo.status === "denied" && (
-        <p className="faint note">
-          Location is off, so hubs aren’t sorted by distance.
-        </p>
-      )}
+      <LocationButton />
 
       {isLoading && (
         <div className="stack" aria-hidden="true">

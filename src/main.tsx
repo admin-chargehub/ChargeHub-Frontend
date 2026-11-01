@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "@/App";
 import { AuthProvider } from "@/auth/AuthContext";
+import { LocationProvider } from "@/location/LocationContext";
 import { ThemeProvider } from "@/theme/ThemeContext";
 import "@/index.css";
 
@@ -27,7 +28,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <ThemeProvider>
           <AuthProvider>
-            <App />
+            <LocationProvider>
+              <App />
+            </LocationProvider>
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>

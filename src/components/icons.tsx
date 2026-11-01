@@ -107,3 +107,29 @@ export function PinIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+export function CrosshairIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="12" cy="12" r="7" />
+      <circle cx="12" cy="12" r="1.6" />
+      <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+    </svg>
+  );
+}
+
+export function CheckIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="m5 12.5 4.5 4.5L19 7" />
+    </svg>
+  );
+}
+
+export function ChevronDownIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="m6 9.5 6 6 6-6" />
+    </svg>
+  );
+}
