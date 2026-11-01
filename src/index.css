@@ -5,27 +5,56 @@
  * centred column rather than a different layout.
  */
 
+/* Palette ramps, transcribed from the Color System on the Figma
+ * "Visualization" page. Keep these raw values in one place and map them to
+ * semantic tokens below — components should only ever use the semantic names.
+ *
+ *   PRIMARY    100 #b2ceff  200 #649cff  300 #176bff  400 #004ed7  500 #003798
+ *   SECONDARY  100 #eaffa5  200 #d5ff4b  300 #b8f000  400 #8fba00  500 #668500
+ *   NEUTRAL    100 #ffffff  200 #e8e8e8  300 #d2d2d2  400 #bbbbbb  500 #a4a4a4
+ *              600 #8e8e8e  700 #777777  800 #606060  900 #4a4a4a  1000 #333333
+ *   TERTIARY   100 #7baced  200 #3882e4  300 #195eb7  400 #103c75  500 #071a33
+ *   RED        100 #fb3748  200 #d00416
+ *   YELLOW     100 #ffdb43  200 #dfb400
+ *   GREEN      100 #84ebb4  200 #1fc16b
+ *
+ * Values marked "derived" below are not in the ramp. The system has no page
+ * background and no soft status fills, so those are mixed from the nearest
+ * ramp entry; replace them if the designer adds the tokens.
+ */
+
 :root {
-  --bg: #f4f6f9;
-  --surface: #ffffff;
-  --surface-2: #f8fafc;
-  --border: #e3e6ea;
+  --bg: #f3f4f6;              /* derived — no page-background token in the ramp */
+  --surface: #ffffff;         /* Neutral 100 */
+  --surface-2: #e8e8e8;       /* Neutral 200 */
+  --border: #d2d2d2;          /* Neutral 300 */
 
-  --text: #121417;
-  --muted: #6b7280;
-  --faint: #9aa1ab;
+  --text: #333333;            /* Neutral 1000 */
+  --muted: #777777;           /* Neutral 700 */
+  --faint: #8e8e8e;           /* Neutral 600 — small print only, never body copy */
 
-  /* Design primary is blue, not the teal the walking skeleton shipped with. */
-  --accent: #2563eb;
-  --accent-ink: #ffffff;
-  --accent-soft: #e8effe;
+  --accent: #176bff;          /* Primary 300 — the brand blue */
+  --accent-ink: #ffffff;      /* Neutral 100 */
+  --accent-soft: #b2ceff;     /* Primary 100 */
 
-  --ok: #15803d;
-  --ok-bg: #e7f6ec;
-  --busy: #b45309;
-  --busy-bg: #fdf1e0;
-  --fault: #b91c1c;
-  --fault-bg: #fdeaea;
+  /* Secondary is the lime in the logo mark. Brand accent, never a status. */
+  --brand-lime: #b8f000;      /* Secondary 300 */
+
+  /* Status colours come in pairs. The ramp's Green 200 and Yellow 200 are
+     vivid fills meant for dots and bars — as *text* on their own pale tint
+     they measure 2.14:1 and 1.82:1, well under the 4.5:1 needed to read. So
+     `--ok`/`--busy` are darkened for text, and `--*-solid` keeps the ramp
+     value for anything filled. Dark mode needs no such split: the ramp
+     colours already clear 8:1 against the dark tints. */
+  --ok: #147f47;              /* derived from Green 200 — 4.59:1 on --ok-bg */
+  --ok-solid: #1fc16b;        /* Green 200 */
+  --ok-bg: #e4f9ee;           /* derived */
+  --busy: #866c00;            /* derived from Yellow 200 — 4.67:1 on --busy-bg */
+  --busy-solid: #dfb400;      /* Yellow 200 */
+  --busy-bg: #fff6d9;         /* derived */
+  --fault: #d00416;           /* Red 200 — 4.78:1 on --fault-bg */
+  --fault-solid: #fb3748;     /* Red 100 */
+  --fault-bg: #ffe6e9;        /* derived */
 
   --radius: 12px;
   --radius-sm: 8px;
@@ -48,25 +77,30 @@
  * if you change one block, change the other. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0e1116;
-    --surface: #171b22;
-    --surface-2: #1d222b;
-    --border: #2a3039;
+    --bg: #071a33;            /* Tertiary 500 */
+    --surface: #0c2550;       /* derived */
+    --surface-2: #103c75;     /* Tertiary 400 */
+    --border: #1b3f70;        /* derived */
 
-    --text: #eef1f5;
-    --muted: #9aa3af;
-    --faint: #6b7480;
+    --text: #ffffff;          /* Neutral 100 */
+    --muted: #a4a4a4;         /* Neutral 500 */
+    --faint: #777777;         /* Neutral 700 */
 
-    --accent: #5b94ff;
-    --accent-ink: #06142e;
-    --accent-soft: #16253f;
+    --accent: #649cff;        /* Primary 200 */
+    --accent-ink: #003798;    /* Primary 500 */
+    --accent-soft: #103c75;   /* Tertiary 400 */
 
-    --ok: #4ade80;
-    --ok-bg: #12261a;
-    --busy: #fbbf24;
-    --busy-bg: #2a2011;
-    --fault: #f87171;
-    --fault-bg: #2b1414;
+    --brand-lime: #b8f000;    /* Secondary 300 */
+
+    --ok: #84ebb4;            /* Green 100 */
+    --ok-solid: #1fc16b;      /* Green 200 */
+    --ok-bg: #0d3a28;         /* derived */
+    --busy: #ffdb43;          /* Yellow 100 */
+    --busy-solid: #dfb400;    /* Yellow 200 */
+    --busy-bg: #3a300d;       /* derived */
+    --fault: #fb3748;         /* Red 100 */
+    --fault-solid: #fb3748;   /* Red 100 */
+    --fault-bg: #3d1016;      /* derived */
 
     --shadow-card: none;
     --shadow-raised: 0 8px 24px rgb(0 0 0 / 40%);
@@ -74,25 +108,30 @@
 }
 
 :root[data-theme="dark"] {
-  --bg: #0e1116;
-  --surface: #171b22;
-  --surface-2: #1d222b;
-  --border: #2a3039;
+  --bg: #071a33;              /* Tertiary 500 */
+  --surface: #0c2550;         /* derived */
+  --surface-2: #103c75;       /* Tertiary 400 */
+  --border: #1b3f70;          /* derived */
 
-  --text: #eef1f5;
-  --muted: #9aa3af;
-  --faint: #6b7480;
+  --text: #ffffff;            /* Neutral 100 */
+  --muted: #a4a4a4;           /* Neutral 500 */
+  --faint: #777777;           /* Neutral 700 */
 
-  --accent: #5b94ff;
-  --accent-ink: #06142e;
-  --accent-soft: #16253f;
+  --accent: #649cff;          /* Primary 200 */
+  --accent-ink: #003798;      /* Primary 500 */
+  --accent-soft: #103c75;     /* Tertiary 400 */
 
-  --ok: #4ade80;
-  --ok-bg: #12261a;
-  --busy: #fbbf24;
-  --busy-bg: #2a2011;
-  --fault: #f87171;
-  --fault-bg: #2b1414;
+  --brand-lime: #b8f000;      /* Secondary 300 */
+
+  --ok: #84ebb4;              /* Green 100 */
+  --ok-solid: #1fc16b;        /* Green 200 */
+  --ok-bg: #0d3a28;           /* derived */
+  --busy: #ffdb43;            /* Yellow 100 */
+  --busy-solid: #dfb400;      /* Yellow 200 */
+  --busy-bg: #3a300d;         /* derived */
+  --fault: #fb3748;           /* Red 100 */
+  --fault-solid: #fb3748;     /* Red 100 */
+  --fault-bg: #3d1016;        /* derived */
 
   --shadow-card: none;
   --shadow-raised: 0 8px 24px rgb(0 0 0 / 40%);
@@ -348,11 +387,14 @@ textarea:focus-visible {
 }
 .brand-lg { font-size: 1.3rem; justify-content: center; }
 
+/* The logo mark in the design is a lime dot beside the wordmark, not the blue
+ * square the skeleton shipped with. The wordmark's own colour is still a guess
+ * — ask the designer for an SVG export rather than eyedroppering a screenshot. */
 .brand-mark {
   width: 16px;
   height: 16px;
-  border-radius: 5px;
-  background: var(--accent);
+  border-radius: 50%;
+  background: var(--brand-lime);
 }
 
 .pill {
@@ -371,7 +413,7 @@ textarea:focus-visible {
   height: 8px;
   border-radius: 50%;
   display: inline-block;
-  background: var(--ok);
+  background: var(--ok-solid);
   flex: none;
 }
 .dot-off { background: var(--faint); }

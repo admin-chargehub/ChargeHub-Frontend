@@ -58,7 +58,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
     // Keep the browser status bar in step with the rendered theme.
     const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]:not([media])');
-    if (meta) meta.content = resolved === "dark" ? "#0e1116" : "#ffffff";
+    if (meta) meta.content = resolved === "dark" ? "#071a33" : "#ffffff";
   }, [preference, resolved]);
 
   const setPreference = useCallback((next: ThemePreference) => {
