@@ -43,11 +43,12 @@ export default function HomePage() {
   const firstName = user?.full_name?.split(" ")[0];
 
   return (
-    <div className="screen screen-tabbed">
+    <div className="screen screen-tabbed screen-home">
       <header className="home-head row-between">
         <span>
           <p className="muted">{firstName ? `Hello, ${firstName}` : "Welcome"}</p>
           <h1>Find a Hub</h1>
+          <p className="home-lede muted">Search for a charging outlet near you.</p>
         </span>
         <ThemeToggleButton />
       </header>

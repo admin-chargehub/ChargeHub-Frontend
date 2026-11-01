@@ -187,9 +187,9 @@ code {
 
 /* -------------------------------------------------------------- layout --- */
 
-/* The phone column. On a wide screen the app stays phone-width and centres
-   rather than stretching — these are phone designs and stretching them looks
-   broken. The operator/admin portals will get their own desktop shell. */
+/* The phone column, up to the wide breakpoint where the desktop rules below
+   widen it and drop the side rules. The operator/admin portals are separate
+   designs and will get their own shell. */
 .shell {
   min-height: 100dvh;
   display: flex;
@@ -832,6 +832,133 @@ textarea:focus-visible {
 .placerow-dist { font-size: 0.82rem; white-space: nowrap; }
 .placerow-check { width: 19px; height: 19px; flex: none; color: var(--accent); }
 
+/* ----------------------------------------------------------- desktop --- */
+
+/* Below this width the phone designs are the design. Above it the layout is
+   the designer's desktop frames: a top nav instead of the tab bar, and the
+   booking screens in two columns. One stylesheet, no JS viewport probing. */
+
+.topnav { display: none; }
+
+@media (min-width: 1024px) {
+  .topnav {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .topnav-inner {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 14px 24px;
+  }
+
+  .topnav-brand { font-size: 1.15rem; font-weight: 700; text-decoration: none; }
+  .topnav-links { display: flex; align-items: center; gap: 28px; }
+
+  .topnav-link {
+    padding: 6px 0;
+    border-bottom: 2px solid transparent;
+    color: var(--muted);
+    font-size: 0.95rem;
+    font-weight: 550;
+    text-decoration: none;
+  }
+  .topnav-link-on { color: var(--text); border-bottom-color: var(--accent); }
+
+  .topnav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .topnav-avatar {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* The phone chrome steps aside: the top nav replaces both. */
+  .tabbar { display: none; }
+  .appheader { display: none; }
+
+  .shell {
+    max-width: 1140px;
+    padding-inline: 24px;
+    /* The side rules framed a phone column; at this width there is no column
+       to frame. */
+    border-inline: 0;
+    min-height: auto;
+  }
+  .screen-tabbed { padding-bottom: 32px; }
+
+  /* The top nav carries the theme control at this width. */
+  .home-head .iconbtn { display: none; }
+
+  .btn-sm {
+    min-height: 38px;
+    padding: 8px 18px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Two columns, with the page title spanning both — the shape of the
+     Select Outlet & Plan and Confirm Booking frames. */
+  .screen-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 0 28px;
+  }
+  .split-head { grid-column: 1 / -1; margin-bottom: 4px; }
+  .split-side { display: flex; flex-direction: column; }
+
+  /* The sticky action bar is a small-screen affordance. With the button
+     sitting under its own column there is nothing to stick to. */
+  .stickybar {
+    position: static;
+    padding: 16px 0 0;
+    background: none;
+    backdrop-filter: none;
+    border-top: 0;
+  }
+
+  /* Find a Hub: heading and location on the left, the hub list on the right. */
+  .screen-home {
+    display: grid;
+    grid-template-columns: minmax(280px, 380px) 1fr;
+    align-items: start;
+    gap: 0 48px;
+  }
+  .screen-home .home-head { grid-row: 1; grid-column: 1; }
+  .screen-home .home-head h1 { font-size: 2.6rem; line-height: 1.1; }
+  .screen-home .locbtn { grid-row: 2; grid-column: 1; justify-self: start; }
+  .screen-home .note { grid-row: 3; grid-column: 1; }
+  .screen-home > .stack,
+  .screen-home > .card,
+  .screen-home > .skeleton { grid-row: 1 / span 4; grid-column: 2; }
+}
+
+.split-title { margin: 0 0 4px; font-size: 1.5rem; }
+.home-lede { margin: 6px 0 0; font-size: 0.95rem; }
+
+@media (max-width: 1023px) {
+  /* The split title duplicates the AppHeader title on a phone. */
+  .split-title { display: none; }
+  .home-lede { display: none; }
+}
+
 /* ------------------------------------------------------------ guards --- */
 
 /* Hover states only where a pointer can actually hover. Without this they
@@ -842,6 +969,7 @@ textarea:focus-visible {
   .btn-ghost:hover { border-color: var(--muted); }
   .iconbtn:hover { background: var(--surface-2); }
   .locbtn:hover { border-color: var(--accent); }
+  .topnav-link:hover { color: var(--text); }
   .placerow:hover { background: var(--surface-2); }
   .placerow-on:hover { background: var(--accent-soft); }
   .tab:hover { color: var(--text); }

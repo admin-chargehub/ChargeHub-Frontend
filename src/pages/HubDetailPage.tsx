@@ -77,12 +77,15 @@ export default function HubDetailPage() {
     <>
       <AppHeader backTo="/" title={s.name} />
 
-      <div className="screen">
-        {s.address && <p className="muted">{s.address}</p>}
-        <p className="stat">
-          <strong>{s.outlets_free_now}</strong> of <strong>{s.outlets_total}</strong> outlets
-          available
-        </p>
+      <div className="screen screen-split">
+        <div className="split-head">
+          <h1 className="split-title">{s.name}</h1>
+          {s.address && <p className="muted">{s.address}</p>}
+          <p className="stat">
+            <strong>{s.outlets_free_now}</strong> of <strong>{s.outlets_total}</strong>{" "}
+            outlets available
+          </p>
+        </div>
 
         <section className="card">
           <h2>Select outlet</h2>
@@ -106,48 +109,50 @@ export default function HubDetailPage() {
           </div>
         </section>
 
-        <section className="card">
-          <h2>Select plan</h2>
+        <div className="split-side">
+          <section className="card">
+            <h2>Select plan</h2>
 
-          {plans.isLoading && <div className="skeleton" style={{ height: 160 }} />}
-          {plans.error && <p className="error">{(plans.error as Error).message}</p>}
+            {plans.isLoading && <div className="skeleton" style={{ height: 160 }} />}
+            {plans.error && <p className="error">{(plans.error as Error).message}</p>}
 
-          <div className="stack">
-            {(plans.data ?? []).map((p) => (
-              <button
-                key={p.id}
-                type="button"
-                className={p.id === planId ? "plan plan-on" : "plan"}
-                aria-pressed={p.id === planId}
-                onClick={() => setPlanId(p.id)}
-              >
-                <span className="grow">
-                  <span className="plan-name">{p.name}</span>
-                  {p.recommended_devices && (
-                    <span className="plan-sub muted">{p.recommended_devices}</span>
-                  )}
-                </span>
-                <span className="plan-price">
-                  {formatNaira(p.price_kobo)}
-                  <span className="plan-per muted">
-                    /{formatDuration(p.max_duration_minutes)}
+            <div className="stack">
+              {(plans.data ?? []).map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={p.id === planId ? "plan plan-on" : "plan"}
+                  aria-pressed={p.id === planId}
+                  onClick={() => setPlanId(p.id)}
+                >
+                  <span className="grow">
+                    <span className="plan-name">{p.name}</span>
+                    {p.recommended_devices && (
+                      <span className="plan-sub muted">{p.recommended_devices}</span>
+                    )}
                   </span>
-                </span>
-              </button>
-            ))}
-          </div>
-        </section>
-      </div>
+                  <span className="plan-price">
+                    {formatNaira(p.price_kobo)}
+                    <span className="plan-per muted">
+                      /{formatDuration(p.max_duration_minutes)}
+                    </span>
+                  </span>
+                </button>
+              ))}
+            </div>
+          </section>
 
-      <div className="stickybar">
-        <button
-          type="button"
-          className="btn btn-primary btn-block"
-          disabled={!ready}
-          onClick={onContinue}
-        >
-          Continue
-        </button>
+          <div className="stickybar">
+            <button
+              type="button"
+              className="btn btn-primary btn-block"
+              disabled={!ready}
+              onClick={onContinue}
+            >
+              Continue
+            </button>
+          </div>
+        </div>
       </div>
     </>
   );

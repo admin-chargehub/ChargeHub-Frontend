@@ -80,8 +80,14 @@ export default function ConfirmBookingPage() {
     <>
       <AppHeader title="Confirm booking" backTo={`/hubs/${draft.stationId}`} />
 
-      <div className="screen">
+      <div className="screen screen-split">
+        <div className="split-head">
+          <h1 className="split-title">Confirm booking</h1>
+          <p className="muted">Check the details, then pay to reserve the outlet.</p>
+        </div>
+
         <section className="card">
+          <h2>Booking summary</h2>
           <dl className="deflist">
             <div className="defrow">
               <dt>Hub</dt>
@@ -112,40 +118,44 @@ export default function ConfirmBookingPage() {
           </dl>
         </section>
 
-        <section className="card">
-          <h2>Payment method</h2>
-          <div className="row paymethod">
-            <span className="paymethod-badge" aria-hidden="true">
-              TEST
-            </span>
-            <span className="grow">
-              <span className="paymethod-name">Demo payment</span>
-              <span className="muted paymethod-sub">
-                No card is charged. Card payment arrives with Paystack.
+        <div className="split-side">
+          <section className="card">
+            <h2>Payment method</h2>
+            <div className="row paymethod">
+              <span className="paymethod-badge" aria-hidden="true">
+                TEST
               </span>
-            </span>
+              <span className="grow">
+                <span className="paymethod-name">Demo payment</span>
+                <span className="muted paymethod-sub">
+                  No card is charged. Card payment arrives with Paystack.
+                </span>
+              </span>
+            </div>
+          </section>
+
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
+
+          <div className="stickybar">
+            <button
+              type="button"
+              className="btn btn-primary btn-block"
+              disabled={checkout.isPending}
+              onClick={() => {
+                setError(null);
+                checkout.mutate();
+              }}
+            >
+              {checkout.isPending
+                ? "Processing…"
+                : `Pay ${formatNaira(plan.price_kobo)} & Book`}
+            </button>
           </div>
-        </section>
-
-        {error && (
-          <p className="error" role="alert">
-            {error}
-          </p>
-        )}
-      </div>
-
-      <div className="stickybar">
-        <button
-          type="button"
-          className="btn btn-primary btn-block"
-          disabled={checkout.isPending}
-          onClick={() => {
-            setError(null);
-            checkout.mutate();
-          }}
-        >
-          {checkout.isPending ? "Processing…" : `Pay ${formatNaira(plan.price_kobo)} & Book`}
-        </button>
+        </div>
       </div>
     </>
   );

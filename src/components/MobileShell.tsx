@@ -1,29 +1,39 @@
 import { Outlet } from "react-router-dom";
 
+import DesktopNav from "@/components/DesktopNav";
 import TabBar from "@/components/TabBar";
 
 /**
- * Phone-width column used by every customer screen.
+ * The customer shell, at both widths.
  *
- * On a wide viewport it centres at 480px rather than stretching. These are
- * phone designs; a 1400px-wide "Find a Hub" would be a different design, not a
- * bigger one. The operator and admin portals are designed as desktop layouts
- * and will get their own shell.
+ * Phone designs below the wide breakpoint, desktop designs above it. Both
+ * chrome elements are always in the DOM and CSS picks one, so there is no
+ * viewport-measuring in JS and nothing jumps on first paint — a width the
+ * stylesheet already knows should not be re-derived in React.
+ *
+ * The operator and admin portals are separate designs and will get their own
+ * shell; this one is the customer's.
  */
 export function MobileShell() {
   return (
-    <div className="shell">
-      <Outlet />
-    </div>
+    <>
+      <DesktopNav />
+      <div className="shell">
+        <Outlet />
+      </div>
+    </>
   );
 }
 
 /** Shell plus the bottom tab bar, for the four top-level destinations. */
 export function TabbedShell() {
   return (
-    <div className="shell">
-      <Outlet />
-      <TabBar />
-    </div>
+    <>
+      <DesktopNav />
+      <div className="shell">
+        <Outlet />
+        <TabBar />
+      </div>
+    </>
   );
 }
