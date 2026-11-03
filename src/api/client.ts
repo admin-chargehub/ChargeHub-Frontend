@@ -26,6 +26,19 @@ export type BookingStatus = components["schemas"]["BookingStatus"];
 export type SessionOut = components["schemas"]["SessionOut"];
 export type SessionStatus = components["schemas"]["SessionStatus"];
 
+// Operator console. Same generated source as everything above — the console
+// gets no hand-written field names of its own.
+export type DashboardOut = components["schemas"]["DashboardOut"];
+export type OpsStationOut = components["schemas"]["OpsStationOut"];
+export type OpsStationDetailOut = components["schemas"]["OpsStationDetailOut"];
+export type OpsOutletOut = components["schemas"]["OpsOutletOut"];
+export type OpsSessionOut = components["schemas"]["OpsSessionOut"];
+export type OutletStatusIn = components["schemas"]["OutletStatusIn"];
+export type ReportOut = components["schemas"]["ReportOut"];
+export type AuditEventOut = components["schemas"]["AuditEventOut"];
+export type TelemetryOut = components["schemas"]["TelemetryOut"];
+export type PowerSource = components["schemas"]["PowerSource"];
+
 const BASE = import.meta.env.VITE_API_URL ?? "";
 const TOKEN_KEY = "chargehub.token";
 
@@ -145,4 +158,35 @@ export const api = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+
+  // ---------------------------------------------------------------- ops ---
+  // Every one of these 403s for a customer token. The console guards its
+  // routes too, but the server is what actually enforces it.
+
+  opsDashboard: () => request<DashboardOut>("/ops/dashboard"),
+
+  opsStations: () => request<OpsStationOut[]>("/ops/stations"),
+
+  opsStation: (id: string) => request<OpsStationDetailOut>(`/ops/stations/${id}`),
+
+  opsSetOutlet: (id: string, body: OutletStatusIn) =>
+    request<OpsOutletOut>(`/ops/outlets/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  opsSessions: (params: { stationId?: string; activeOnly?: boolean } = {}) => {
+    const q = new URLSearchParams();
+    if (params.stationId) q.set("station_id", params.stationId);
+    if (params.activeOnly) q.set("active_only", "true");
+    const qs = q.toString();
+    return request<OpsSessionOut[]>(`/ops/sessions${qs ? `?${qs}` : ""}`);
+  },
+
+  opsEndSession: (id: string) =>
+    request<OpsSessionOut>(`/ops/sessions/${id}/end`, { method: "POST" }),
+
+  opsReports: (days: number) => request<ReportOut>(`/ops/reports?days=${days}`),
+
+  opsAudit: () => request<AuditEventOut[]>("/ops/audit"),
 };

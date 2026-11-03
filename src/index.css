@@ -959,6 +959,326 @@ textarea:focus-visible {
   .home-lede { display: none; }
 }
 
+/* ------------------------------------------------- operator console --- */
+
+/* A denser, wider layout than the customer app. Same tokens throughout: the
+   design system is the one thing both surfaces share, so a colour fixed in
+   one is fixed in both. */
+
+.small { font-size: 0.82rem; }
+.block { display: block; }
+
+.input {
+  min-height: var(--tap);
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  width: 100%;
+}
+.input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.field-label { color: var(--muted); font-weight: 500; }
+
+.pill-bad { background: var(--fault-bg); color: var(--fault); }
+.pill-warn { background: var(--busy-bg); color: var(--busy); }
+
+.ops { min-height: 100dvh; display: flex; flex-direction: column; background: var(--bg); }
+
+.ops-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 14px 16px calc(14px + var(--safe-bottom));
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.ops-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+.ops-brand-text { display: flex; flex-direction: column; line-height: 1.15; }
+.ops-brand-sub {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.ops-nav { display: flex; gap: 4px; overflow-x: auto; }
+
+.ops-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: var(--tap);
+  padding: 9px 13px;
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 550;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.ops-link svg { width: 19px; height: 19px; flex: none; }
+.ops-link-on { background: var(--accent-soft); color: var(--accent); }
+
+.ops-side-foot { display: flex; flex-direction: column; gap: 10px; }
+.ops-who { display: flex; align-items: center; gap: 9px; font-size: 0.86rem; }
+.ops-who-icon { width: 18px; height: 18px; flex: none; color: var(--brand-lime); }
+.ops-who-name { display: block; font-weight: 600; }
+.ops-who-role {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+.ops-side-actions { gap: 8px; }
+
+.ops-main { flex: 1; padding: 20px 16px calc(28px + var(--safe-bottom)); }
+
+.ops-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.ops-head h1 { margin: 0; font-size: 1.6rem; }
+.ops-head p { margin: 2px 0 0; font-size: 0.9rem; }
+
+.ops-section { margin-top: 26px; }
+.ops-section > h2 { margin: 0 0 12px; font-size: 1.05rem; }
+
+.ops-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+.kpi { display: flex; flex-direction: column; gap: 2px; }
+.kpi-value { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.kpi-label { font-size: 0.82rem; }
+.kpi-sub { font-size: 0.74rem; }
+
+.ops-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-top: 14px;
+  border-left: 3px solid var(--busy-solid);
+}
+.ops-alert-icon { width: 20px; height: 20px; flex: none; color: var(--busy); margin-top: 1px; }
+
+.ops-list { display: flex; flex-direction: column; gap: 10px; }
+.ops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.ops-card-title { margin: 0; font-size: 1.02rem; }
+
+.ops-row { display: flex; align-items: flex-start; gap: 12px; }
+.ops-row-right { text-align: right; white-space: nowrap; }
+.ops-station-head { align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+.ops-counts { text-align: right; white-space: nowrap; }
+.ops-count-pill { display: block; margin-top: 6px; }
+.ops-offline { margin: 10px 0 0; display: inline-block; }
+
+.ops-meters { margin-top: 12px; display: flex; flex-direction: column; gap: 5px; }
+.meterline { display: flex; flex-direction: column; gap: 5px; }
+.meterbar { display: block; height: 6px; border-radius: 3px; background: var(--surface-2); }
+.meterbar-fill { display: block; height: 100%; border-radius: 3px; background: var(--ok-solid); }
+
+/* Power panel */
+.power { display: flex; flex-direction: column; gap: 10px; }
+.power-row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+.power-stats { display: flex; gap: 20px; }
+.power-stat { display: flex; flex-direction: column; }
+.power-stat-value { font-weight: 650; font-variant-numeric: tabular-nums; }
+.power-stat-label { font-size: 0.74rem; }
+.power-seen { margin: 0; }
+
+.pbadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+.pbadge-icon { width: 14px; height: 14px; }
+.pbadge-ok { background: var(--ok-bg); color: var(--ok); }
+.pbadge-info { background: var(--accent-soft); color: var(--accent); }
+.pbadge-warn { background: var(--busy-bg); color: var(--busy); }
+.pbadge-bad { background: var(--fault-bg); color: var(--fault); }
+
+.soc { height: 7px; border-radius: 4px; background: var(--surface-2); overflow: hidden; }
+.soc-fill { display: block; height: 100%; border-radius: 4px; }
+.soc-ok { background: var(--ok-solid); }
+.soc-mid { background: var(--busy-solid); }
+.soc-low { background: var(--fault-solid); }
+
+/* Outlet grid */
+.ops-outlets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 10px;
+}
+.opsoutlet {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 11px;
+  min-height: 86px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.opsoutlet-label { font-size: 1.05rem; font-weight: 700; }
+.opsoutlet-status { font-size: 0.74rem; text-transform: capitalize; }
+.opsoutlet-reason {
+  font-size: 0.7rem;
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.opsoutlet-since { font-size: 0.68rem; margin-top: auto; }
+.opsoutlet-available { background: var(--ok-bg); color: var(--ok); border-color: transparent; }
+.opsoutlet-in_use { background: var(--busy-bg); color: var(--busy); border-color: transparent; }
+.opsoutlet-reserved { background: var(--busy-bg); color: var(--busy); border-color: transparent; }
+.opsoutlet-fault { background: var(--fault-bg); color: var(--fault); border-color: transparent; }
+.opsoutlet-offline { background: var(--fault-bg); color: var(--fault); border-color: transparent; }
+.opsoutlet-maintenance { background: var(--surface-2); color: var(--muted); }
+
+/* Outlet dialog */
+.ops-modal-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgb(0 0 0 / 0.5);
+  overflow-y: auto;
+}
+.ops-modal { width: min(100%, 440px); max-height: 90dvh; overflow-y: auto; }
+.ops-modal h2 { margin: 0; }
+.ops-modal-options { margin: 14px 0; }
+.ops-modal-actions { gap: 10px; margin-top: 16px; }
+.ops-conflict {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--fault-bg);
+  color: var(--fault);
+}
+.ops-conflict p { margin: 5px 0 0; }
+
+/* Sessions */
+.ops-session { align-items: center; }
+.ops-session-stats { text-align: right; white-space: nowrap; }
+.ops-session-clock {
+  display: block;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.ops-confirm { gap: 7px; flex: none; }
+
+/* Reports */
+.ops-impact {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 14px;
+  margin: 14px 0 10px;
+}
+.ops-figure { display: flex; flex-direction: column; gap: 2px; }
+.ops-figure-value { font-size: 1.3rem; font-weight: 700; }
+.ops-assumptions { margin: 0; }
+
+.chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  height: 148px;
+  padding: 10px 0 0;
+}
+.chart-col { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.chart-bar-track { flex: 1; display: flex; align-items: flex-end; }
+.chart-bar {
+  width: 100%;
+  min-height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: var(--accent);
+}
+/* A zero day gets a visible baseline rather than nothing, so an outage reads
+   as a gap in the data instead of a bar that was never drawn. */
+.chart-bar-zero { min-height: 2px; background: var(--border); }
+.chart-label {
+  font-size: 0.64rem;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.ops-table { display: flex; flex-direction: column; }
+.ops-tr {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.88rem;
+}
+.ops-tr span:not(:first-child) { text-align: right; font-variant-numeric: tabular-nums; }
+.ops-th { font-weight: 650; color: var(--muted); font-size: 0.78rem; }
+
+/* Audit trail */
+.trail { list-style: none; margin: 0; padding: 0; }
+.trail-item { display: flex; gap: 12px; padding: 11px 0; }
+.trail-dot {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+.trail-body { flex: 1; min-width: 0; }
+.trail-summary { font-size: 0.92rem; }
+
+@media (min-width: 1024px) {
+  .ops { flex-direction: row; }
+
+  .ops-side {
+    width: 232px;
+    flex: none;
+    height: 100dvh;
+    position: sticky;
+    top: 0;
+    padding: 20px 14px;
+    border-bottom: 0;
+    border-right: 1px solid var(--border);
+  }
+  .ops-nav { flex-direction: column; gap: 2px; overflow: visible; }
+  .ops-side-foot { margin-top: auto; }
+  .ops-main { padding: 28px 32px; max-width: 1180px; }
+  .ops-head h1 { font-size: 1.9rem; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ops-link:hover { color: var(--text); background: var(--surface-2); }
+  .ops-link-on:hover { background: var(--accent-soft); color: var(--accent); }
+  .opsoutlet:hover { border-color: var(--accent); }
+}
+
 /* ------------------------------------------------------------ guards --- */
 
 /* Hover states only where a pointer can actually hover. Without this they

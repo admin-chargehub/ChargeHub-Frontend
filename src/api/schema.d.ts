@@ -296,6 +296,170 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/ops/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Dashboard
+         * @description Everything the landing screen needs, in one round trip.
+         *
+         *     One endpoint rather than five because the dashboard is useless partially
+         *     loaded, and five parallel requests means five chances for one to fail and
+         *     leave a panel blank with no explanation.
+         */
+        get: operations["dashboard_api_v1_ops_dashboard_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Stations */
+        get: operations["list_stations_api_v1_ops_stations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/stations/{station_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Station */
+        get: operations["get_station_api_v1_ops_stations__station_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/outlets/{outlet_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Set Outlet Status
+         * @description Take an outlet out of service, or put it back.
+         *
+         *     Three guards, in this order, because each one protects against a different
+         *     way to make the board lie:
+         *
+         *     1. Only statuses the booking lifecycle does not own may be set by hand.
+         *     2. Taking an outlet out of service requires a reason.
+         *     3. An outlet with a live session on it is refused unless `force` is set,
+         *        and forcing ends that session properly rather than orphaning it — a
+         *        customer mid-charge must not simply have the socket vanish from under
+         *        them with the booking still marked active.
+         */
+        patch: operations["set_outlet_status_api_v1_ops_outlets__outlet_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/ops/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Sessions */
+        get: operations["list_sessions_api_v1_ops_sessions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/sessions/{session_id}/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * End Session
+         * @description End someone else's session.
+         *
+         *     Goes through the same service the customer's own "End session" uses, so
+         *     the outlet is released and the booking closed by one code path. An
+         *     operator shortcut that wrote the status directly is how outlets end up
+         *     stuck IN_USE with no session behind them.
+         */
+        post: operations["end_session_api_v1_ops_sessions__session_id__end_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reports */
+        get: operations["reports_api_v1_ops_reports_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Audit Trail */
+        get: operations["audit_trail_api_v1_ops_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -317,6 +481,51 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AttentionOut */
+        AttentionOut: {
+            /**
+             * Station Id
+             * Format: uuid
+             */
+            station_id: string;
+            /** Station Name */
+            station_name: string;
+            /**
+             * Outlet Id
+             * Format: uuid
+             */
+            outlet_id: string;
+            /** Outlet Label */
+            outlet_label: string;
+            status: components["schemas"]["OutletStatus"];
+            /** Reason */
+            reason: string | null;
+            /** Since */
+            since: string | null;
+        };
+        /** AuditEventOut */
+        AuditEventOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Actor Email */
+            actor_email: string;
+            /** Action */
+            action: string;
+            /** Target Type */
+            target_type: string;
+            /** Target Label */
+            target_label: string | null;
+            /** Summary */
+            summary: string;
+            /**
+             * At
+             * Format: date-time
+             */
+            at: string;
+        };
         /** AvailabilityQuery */
         AvailabilityQuery: {
             /**
@@ -433,10 +642,47 @@ export interface components {
          * @enum {string}
          */
         BookingStatus: "pending" | "confirmed" | "active" | "completed" | "cancelled" | "expired";
+        /** DashboardOut */
+        DashboardOut: {
+            overview: components["schemas"]["OverviewOut"];
+            /** Stations */
+            stations: components["schemas"]["OpsStationOut"][];
+            /** Attention */
+            attention: components["schemas"]["AttentionOut"][];
+            /** Upcoming */
+            upcoming: components["schemas"]["UpcomingBookingOut"][];
+        };
+        /** DayPointOut */
+        DayPointOut: {
+            /**
+             * Day
+             * Format: date
+             */
+            day: string;
+            /** Sessions */
+            sessions: number;
+            /** Energy Wh */
+            energy_wh: number;
+            /** Revenue Kobo */
+            revenue_kobo: number;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** ImpactOut */
+        ImpactOut: {
+            /** Energy Kwh */
+            energy_kwh: number;
+            /** Litres Displaced */
+            litres_displaced: number;
+            /** Kg Co2 Avoided */
+            kg_co2_avoided: number;
+            /** Naira Fuel Avoided */
+            naira_fuel_avoided: number;
+            /** Assumptions */
+            assumptions: string;
         };
         /** LoginRequest */
         LoginRequest: {
@@ -447,6 +693,127 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** OpsOutletOut */
+        OpsOutletOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Index */
+            index: number;
+            /** Label */
+            label: string | null;
+            status: components["schemas"]["OutletStatus"];
+            /** Max Power W */
+            max_power_w: number;
+            /** Fault Reason */
+            fault_reason: string | null;
+            /** Status Changed At */
+            status_changed_at: string | null;
+        };
+        /** OpsSessionOut */
+        OpsSessionOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Station Id
+             * Format: uuid
+             */
+            station_id: string;
+            /** Station Name */
+            station_name: string;
+            /** Outlet Label */
+            outlet_label: string;
+            /** Customer Name */
+            customer_name: string;
+            /** Customer Email */
+            customer_email: string;
+            /** Customer Phone */
+            customer_phone: string | null;
+            /** Status */
+            status: string;
+            /**
+             * Started At
+             * Format: date-time
+             */
+            started_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Ended At */
+            ended_at: string | null;
+            /** End Reason */
+            end_reason: string | null;
+            /** Energy Wh */
+            energy_wh: number;
+            /** Power W */
+            power_w: number | null;
+            /** Cost Kobo */
+            cost_kobo: number;
+            /**
+             * Server Now
+             * Format: date-time
+             */
+            server_now: string;
+        };
+        /** OpsStationDetailOut */
+        OpsStationDetailOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /** Address */
+            address: string | null;
+            /** Is Active */
+            is_active: boolean;
+            /** Outlets Total */
+            outlets_total: number;
+            /** Outlets Available */
+            outlets_available: number;
+            /** Outlets In Use */
+            outlets_in_use: number;
+            /** Outlets Faulty */
+            outlets_faulty: number;
+            telemetry: components["schemas"]["TelemetryOut"] | null;
+            /** Outlets */
+            outlets: components["schemas"]["OpsOutletOut"][];
+        };
+        /** OpsStationOut */
+        OpsStationOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Slug */
+            slug: string;
+            /** Address */
+            address: string | null;
+            /** Is Active */
+            is_active: boolean;
+            /** Outlets Total */
+            outlets_total: number;
+            /** Outlets Available */
+            outlets_available: number;
+            /** Outlets In Use */
+            outlets_in_use: number;
+            /** Outlets Faulty */
+            outlets_faulty: number;
+            telemetry: components["schemas"]["TelemetryOut"] | null;
         };
         /** OutletOut */
         OutletOut: {
@@ -468,6 +835,45 @@ export interface components {
          * @enum {string}
          */
         OutletStatus: "available" | "in_use" | "reserved" | "fault" | "offline" | "maintenance";
+        /** OutletStatusIn */
+        OutletStatusIn: {
+            status: components["schemas"]["OutletStatus"];
+            /** Reason */
+            reason?: string | null;
+            /**
+             * Force
+             * @default false
+             */
+            force: boolean;
+        };
+        /** OverviewOut */
+        OverviewOut: {
+            /** Stations Total */
+            stations_total: number;
+            /** Stations Online */
+            stations_online: number;
+            /** Outlets Total */
+            outlets_total: number;
+            /** Outlets Available */
+            outlets_available: number;
+            /** Outlets In Use */
+            outlets_in_use: number;
+            /** Outlets Faulty */
+            outlets_faulty: number;
+            /** Sessions Active */
+            sessions_active: number;
+            /** Revenue Today Kobo */
+            revenue_today_kobo: number;
+            /** Energy Today Wh */
+            energy_today_wh: number;
+            /** Generator Minutes Today */
+            generator_minutes_today: number;
+            /**
+             * Server Now
+             * Format: date-time
+             */
+            server_now: string;
+        };
         /**
          * PlanOut
          * @description A tariff plan as the booking UI needs it.
@@ -497,6 +903,15 @@ export interface components {
             recommended_devices: string | null;
         };
         /**
+         * PowerSource
+         * @description Which supply is carrying the load right now.
+         *
+         *     Mirrors the states the existing HPTS controller already switches between,
+         *     plus BATTERY for running off storage with no live source.
+         * @enum {string}
+         */
+        PowerSource: "solar" | "battery" | "grid" | "generator" | "none";
+        /**
          * RedeemRequest
          * @description What the station keypad sends. Eventually this comes over MQTT from the
          *     HGC; for now it is an HTTP call so the flow can be exercised without
@@ -524,6 +939,24 @@ export interface components {
             password: string;
             /** Phone */
             phone?: string | null;
+        };
+        /** ReportOut */
+        ReportOut: {
+            /** Days */
+            days: number;
+            /** Sessions */
+            sessions: number;
+            /** Energy Wh */
+            energy_wh: number;
+            /** Revenue Kobo */
+            revenue_kobo: number;
+            /** Series */
+            series: components["schemas"]["DayPointOut"][];
+            /** By Station */
+            by_station: components["schemas"]["StationTotalsOut"][];
+            impact: components["schemas"]["ImpactOut"];
+            /** Timezone Note */
+            timezone_note: string;
         };
         /**
          * SessionEndReason
@@ -638,6 +1071,45 @@ export interface components {
             /** Is Active */
             is_active: boolean;
         };
+        /** StationTotalsOut */
+        StationTotalsOut: {
+            /**
+             * Station Id
+             * Format: uuid
+             */
+            station_id: string;
+            /** Name */
+            name: string;
+            /** Sessions */
+            sessions: number;
+            /** Energy Wh */
+            energy_wh: number;
+            /** Revenue Kobo */
+            revenue_kobo: number;
+        };
+        /** TelemetryOut */
+        TelemetryOut: {
+            source: components["schemas"]["PowerSource"];
+            /** Battery Soc Pct */
+            battery_soc_pct: number | null;
+            /** Solar W */
+            solar_w: number;
+            /** Load W */
+            load_w: number;
+            /** Grid Available */
+            grid_available: boolean;
+            /** Generator Running */
+            generator_running: boolean;
+            /** Generator Minutes Today */
+            generator_minutes_today: number;
+            /**
+             * Last Seen At
+             * Format: date-time
+             */
+            last_seen_at: string;
+            /** Is Online */
+            is_online: boolean;
+        };
         /** TokenResponse */
         TokenResponse: {
             /** Access Token */
@@ -650,6 +1122,32 @@ export interface components {
             /** Expires In */
             expires_in: number;
             user: components["schemas"]["UserOut"];
+        };
+        /** UpcomingBookingOut */
+        UpcomingBookingOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Station Name */
+            station_name: string;
+            /** Outlet Label */
+            outlet_label: string;
+            /** Customer Name */
+            customer_name: string;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Amount Kobo */
+            amount_kobo: number;
         };
         /** UserOut */
         UserOut: {
@@ -1165,6 +1663,238 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AvailabilityResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dashboard_api_v1_ops_dashboard_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardOut"];
+                };
+            };
+        };
+    };
+    list_stations_api_v1_ops_stations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsStationOut"][];
+                };
+            };
+        };
+    };
+    get_station_api_v1_ops_stations__station_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                station_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsStationDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_outlet_status_api_v1_ops_outlets__outlet_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                outlet_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OutletStatusIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsOutletOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_sessions_api_v1_ops_sessions_get: {
+        parameters: {
+            query?: {
+                station_id?: string | null;
+                active_only?: boolean;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsSessionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    end_session_api_v1_ops_sessions__session_id__end_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsSessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reports_api_v1_ops_reports_get: {
+        parameters: {
+            query?: {
+                days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    audit_trail_api_v1_ops_audit_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditEventOut"][];
                 };
             };
             /** @description Validation Error */

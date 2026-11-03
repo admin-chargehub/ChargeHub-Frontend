@@ -133,3 +133,96 @@ export function ChevronDownIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+export function GaugeIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M4 18a8 8 0 1 1 16 0" />
+      <path d="m12 14 4-4" />
+      <circle cx="12" cy="18" r="1.4" />
+    </svg>
+  );
+}
+
+export function StationsIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="4" y="3" width="10" height="18" rx="2" />
+      <path d="M7 7h4M7 11h4" />
+      <path d="M17 9v8a2 2 0 0 0 3 0v-5l-3-3V7" />
+    </svg>
+  );
+}
+
+export function SessionsIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7v5l3.5 2" />
+    </svg>
+  );
+}
+
+export function ReportsIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M4 20h16" />
+      <rect x="6" y="11" width="3.5" height="6" rx="1" />
+      <rect x="12" y="6" width="3.5" height="11" rx="1" />
+    </svg>
+  );
+}
+
+export function AuditIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z" />
+      <path d="M14 3v4h4M8.5 13h7M8.5 17h4" />
+    </svg>
+  );
+}
+
+export function SolarIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.2 4.2l1.5 1.5M18.3 18.3l1.5 1.5M2 12h2M20 12h2M4.2 19.8l1.5-1.5M18.3 5.7l1.5-1.5" />
+    </svg>
+  );
+}
+
+export function BatteryIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="2" y="7" width="17" height="10" rx="2" />
+      <path d="M22 11v2" />
+    </svg>
+  );
+}
+
+export function GridIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M12 3v18M7 8l5-5 5 5M5 21l3-8M19 21l-3-8M7.5 13h9" />
+    </svg>
+  );
+}
+
+export function GeneratorIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="3" y="8" width="18" height="11" rx="2" />
+      <path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2" />
+      <path d="M12 11.5v4M10 13.5h4" />
+    </svg>
+  );
+}
+
+export function WarnIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <path d="M12 4.5 2.8 20h18.4L12 4.5z" />
+      <path d="M12 10v4M12 17.2v.1" />
+    </svg>
+  );
+}
