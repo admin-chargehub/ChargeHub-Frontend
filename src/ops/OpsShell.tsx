@@ -4,8 +4,10 @@ import { useAuth } from "@/auth/AuthContext";
 import {
   AuditIcon,
   BoltIcon,
+  CounterIcon,
   GaugeIcon,
   ReportsIcon,
+  SearchIcon,
   SessionsIcon,
   StationsIcon,
 } from "@/components/icons";
@@ -13,6 +15,8 @@ import { ThemeToggleButton } from "@/components/ThemeToggle";
 
 const LINKS = [
   { to: "/ops", label: "Dashboard", Icon: GaugeIcon, end: true },
+  { to: "/ops/counter", label: "Counter", Icon: CounterIcon, end: false },
+  { to: "/ops/lookup", label: "Find a PIN", Icon: SearchIcon, end: false },
   { to: "/ops/stations", label: "Stations", Icon: StationsIcon, end: false },
   { to: "/ops/sessions", label: "Sessions", Icon: SessionsIcon, end: false },
   { to: "/ops/reports", label: "Reports", Icon: ReportsIcon, end: false },

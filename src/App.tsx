@@ -13,7 +13,9 @@ import HubDetailPage from "@/pages/HubDetailPage";
 import LoginPage from "@/pages/LoginPage";
 import OnboardingPage from "@/pages/OnboardingPage";
 import OpsAuditPage from "@/ops/OpsAuditPage";
+import OpsCounterPage from "@/ops/OpsCounterPage";
 import OpsDashboardPage from "@/ops/OpsDashboardPage";
+import OpsLookupPage from "@/ops/OpsLookupPage";
 import OpsReportsPage from "@/ops/OpsReportsPage";
 import OpsSessionsPage from "@/ops/OpsSessionsPage";
 import OpsShell from "@/ops/OpsShell";
@@ -99,6 +101,8 @@ export default function App() {
         }
       >
         <Route index element={<OpsDashboardPage />} />
+        <Route path="counter" element={<OpsCounterPage />} />
+        <Route path="lookup" element={<OpsLookupPage />} />
         <Route path="stations" element={<OpsStationsPage />} />
         <Route path="stations/:stationId" element={<OpsStationDetailPage />} />
         <Route path="sessions" element={<OpsSessionsPage />} />

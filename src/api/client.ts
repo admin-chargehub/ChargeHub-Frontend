@@ -38,6 +38,10 @@ export type ReportOut = components["schemas"]["ReportOut"];
 export type AuditEventOut = components["schemas"]["AuditEventOut"];
 export type TelemetryOut = components["schemas"]["TelemetryOut"];
 export type PowerSource = components["schemas"]["PowerSource"];
+export type WalkInIn = components["schemas"]["WalkInIn"];
+export type WalkInOut = components["schemas"]["WalkInOut"];
+export type LookupOut = components["schemas"]["LookupOut"];
+export type PaymentMethod = components["schemas"]["PaymentMethod"];
 
 const BASE = import.meta.env.VITE_API_URL ?? "";
 const TOKEN_KEY = "chargehub.token";
@@ -189,4 +193,30 @@ export const api = {
   opsReports: (days: number) => request<ReportOut>(`/ops/reports?days=${days}`),
 
   opsAudit: () => request<AuditEventOut[]>("/ops/audit"),
+
+  /** Book and take payment for someone standing at the counter. */
+  opsWalkIn: (body: WalkInIn) =>
+    request<WalkInOut>("/ops/bookings", { method: "POST", body: JSON.stringify(body) }),
+
+  opsExtendSession: (id: string, minutes: number, reason?: string) =>
+    request<OpsSessionOut>(`/ops/sessions/${id}/extend`, {
+      method: "POST",
+      body: JSON.stringify({ minutes, reason: reason || null }),
+    }),
+
+  opsRefund: (bookingId: string, kobo: number, reason: string) =>
+    request<{ booking_id: string; refund_kobo: number; amount_kobo: number }>(
+      `/ops/bookings/${bookingId}/refund`,
+      { method: "POST", body: JSON.stringify({ kobo, reason }) },
+    ),
+
+  opsSetStationActive: (id: string, isActive: boolean, reason?: string) =>
+    request<OpsStationOut>(`/ops/stations/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ is_active: isActive, reason: reason || null }),
+    }),
+
+  /** Resolve a PIN someone is holding at the counter. null when unknown. */
+  opsLookup: (code: string) =>
+    request<LookupOut | null>(`/ops/lookup?code=${encodeURIComponent(code)}`),
 };

@@ -1279,6 +1279,66 @@ textarea:focus-visible {
   .opsoutlet:hover { border-color: var(--accent); }
 }
 
+/* Counter, lookup and refunds */
+.counter { display: flex; flex-direction: column; gap: 16px; }
+.counter .field { gap: 8px; }
+
+select.input { appearance: none; cursor: pointer; }
+
+.receipt { text-align: center; display: flex; flex-direction: column; gap: 12px; }
+.receipt h2 { margin: 0; }
+.receipt p { margin: 0; }
+.receipt .deflist { text-align: left; }
+.receipt-tick {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+.receipt-tick svg { width: 28px; height: 28px; }
+.receipt-code {
+  padding: 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-soft);
+}
+.receipt-code-label {
+  display: block;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.receipt-code strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 1.9rem;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.lookup-input {
+  font-size: 1.25rem;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.lookup-none { margin-top: 16px; }
+
+.refund {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.refund p { margin: 0; }
+
+.ops-extend-error { flex-basis: 100%; }
+
 /* ------------------------------------------------------------ guards --- */
 
 /* Hover states only where a pointer can actually hover. Without this they

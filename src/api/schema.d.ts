@@ -351,7 +351,15 @@ export interface paths {
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Set Station Active
+         * @description Open or close a whole hub.
+         *
+         *     Closing hides it from the customer app immediately. It does not touch
+         *     sessions already running — people mid-charge keep what they paid for, and
+         *     the hub empties out on its own.
+         */
+        patch: operations["set_station_active_api_v1_ops_stations__station_id__patch"];
         trace?: never;
     };
     "/api/v1/ops/outlets/{outlet_id}": {
@@ -452,6 +460,102 @@ export interface paths {
         };
         /** Audit Trail */
         get: operations["audit_trail_api_v1_ops_audit_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/bookings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Book Walk In
+         * @description Book and take payment for someone standing at the counter.
+         *
+         *     The pilot is a kiosk on a campus. People arrive with cash and a phone
+         *     that has no data, and before this the platform had no way to serve them
+         *     at all — which would have pushed those takings off the books rather than
+         *     into a report.
+         */
+        post: operations["book_walk_in_api_v1_ops_bookings_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/sessions/{session_id}/extend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Extend Session
+         * @description Give a running session more time.
+         *
+         *     Refused when the extra window collides with somebody else's booking —
+         *     otherwise this quietly hands the next customer's slot to whoever is
+         *     already standing there.
+         */
+        post: operations["extend_session_api_v1_ops_sessions__session_id__extend_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/bookings/{booking_id}/refund": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Refund Booking
+         * @description Record money given back.
+         *
+         *     Records it; it does not move it. The operator hands over cash, or raises
+         *     the refund with the gateway. Claiming the platform had moved the money
+         *     would be worse than recording nothing.
+         */
+        post: operations["refund_booking_api_v1_ops_bookings__booking_id__refund_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/ops/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Lookup Code
+         * @description Answer "what is this PIN?" for somebody at the counter.
+         *
+         *     Resolved by hash exactly the way redemption resolves it, so a code this
+         *     screen calls valid is a code the keypad will accept.
+         */
+        get: operations["lookup_code_api_v1_ops_lookup_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -666,6 +770,13 @@ export interface components {
             /** Revenue Kobo */
             revenue_kobo: number;
         };
+        /** ExtendIn */
+        ExtendIn: {
+            /** Minutes */
+            minutes: number;
+            /** Reason */
+            reason?: string | null;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -693,6 +804,44 @@ export interface components {
             email: string;
             /** Password */
             password: string;
+        };
+        /** LookupOut */
+        LookupOut: {
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            /** Station Name */
+            station_name: string;
+            /** Outlet Label */
+            outlet_label: string;
+            /** Customer Name */
+            customer_name: string;
+            /** Customer Phone */
+            customer_phone: string | null;
+            /** Status */
+            status: string;
+            /** Code State */
+            code_state: string;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Amount Kobo */
+            amount_kobo: number;
+            /** Refund Kobo */
+            refund_kobo: number;
+            /** Session Id */
+            session_id: string | null;
+            /** Session Status */
+            session_status: string | null;
         };
         /** OpsOutletOut */
         OpsOutletOut: {
@@ -875,6 +1024,18 @@ export interface components {
             server_now: string;
         };
         /**
+         * PaymentMethod
+         * @description How the money arrived.
+         *
+         *     CASH exists because the pilot is a kiosk on a university campus: people
+         *     turn up without a smartphone, or with one that has no data, and an
+         *     operator takes a note and books it for them. A platform that can only be
+         *     paid through its own app does not work at that counter, and pretending
+         *     otherwise would push those takings off the books entirely.
+         * @enum {string}
+         */
+        PaymentMethod: "card" | "transfer" | "ussd" | "wallet" | "cash";
+        /**
          * PlanOut
          * @description A tariff plan as the booking UI needs it.
          *
@@ -925,6 +1086,13 @@ export interface components {
              * @description Accepts the XXXXX-XXXXX display form.
              */
             code: string;
+        };
+        /** RefundIn */
+        RefundIn: {
+            /** Kobo */
+            kobo: number;
+            /** Reason */
+            reason: string;
         };
         /** RegisterRequest */
         RegisterRequest: {
@@ -1025,6 +1193,13 @@ export interface components {
          * @enum {string}
          */
         SessionStatus: "active" | "completed";
+        /** StationActiveIn */
+        StationActiveIn: {
+            /** Is Active */
+            is_active: boolean;
+            /** Reason */
+            reason?: string | null;
+        };
         /** StationDetailOut */
         StationDetailOut: {
             /**
@@ -1189,6 +1364,64 @@ export interface components {
             input?: unknown;
             /** Context */
             ctx?: Record<string, never>;
+        };
+        /**
+         * WalkInIn
+         * @description A booking taken at the counter for someone who is standing there.
+         */
+        WalkInIn: {
+            /**
+             * Outlet Id
+             * Format: uuid
+             */
+            outlet_id: string;
+            /**
+             * Plan Id
+             * Format: uuid
+             */
+            plan_id: string;
+            /** Name */
+            name: string;
+            /** Phone */
+            phone?: string | null;
+            /** Email */
+            email?: string | null;
+            /** @default cash */
+            payment_method: components["schemas"]["PaymentMethod"];
+        };
+        /** WalkInOut */
+        WalkInOut: {
+            /**
+             * Booking Id
+             * Format: uuid
+             */
+            booking_id: string;
+            /** Access Code */
+            access_code: string;
+            /** Customer Name */
+            customer_name: string;
+            /** Customer Phone */
+            customer_phone: string | null;
+            /** New Customer */
+            new_customer: boolean;
+            /** Station Name */
+            station_name: string;
+            /** Outlet Label */
+            outlet_label: string;
+            /**
+             * Starts At
+             * Format: date-time
+             */
+            starts_at: string;
+            /**
+             * Ends At
+             * Format: date-time
+             */
+            ends_at: string;
+            /** Amount Kobo */
+            amount_kobo: number;
+            /** Payment Method */
+            payment_method: string;
         };
     };
     responses: never;
@@ -1747,6 +1980,41 @@ export interface operations {
             };
         };
     };
+    set_station_active_api_v1_ops_stations__station_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                station_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StationActiveIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsStationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     set_outlet_status_api_v1_ops_outlets__outlet_id__patch: {
         parameters: {
             query?: never;
@@ -1895,6 +2163,142 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuditEventOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    book_walk_in_api_v1_ops_bookings_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["WalkInIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WalkInOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    extend_session_api_v1_ops_sessions__session_id__extend_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExtendIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OpsSessionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    refund_booking_api_v1_ops_bookings__booking_id__refund_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                booking_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RefundIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lookup_code_api_v1_ops_lookup_get: {
+        parameters: {
+            query: {
+                code: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LookupOut"] | null;
                 };
             };
             /** @description Validation Error */

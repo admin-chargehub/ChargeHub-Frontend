@@ -20,6 +20,12 @@ export default function OpsSessionsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ops"] }),
   });
 
+  const extend = useMutation({
+    mutationFn: ({ id, minutes }: { id: string; minutes: number }) =>
+      api.opsExtendSession(id, minutes),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["ops"] }),
+  });
+
   const live = (data ?? []).filter((s) => s.status === "active").length;
 
   return (
@@ -59,6 +65,12 @@ export default function OpsSessionsPage() {
             session={s}
             onEnd={() => endSession.mutate(s.id)}
             ending={endSession.isPending && endSession.variables === s.id}
+            onExtend={(minutes) => extend.mutate({ id: s.id, minutes })}
+            extendError={
+              extend.variables?.id === s.id && extend.error
+                ? (extend.error as Error).message
+                : null
+            }
           />
         ))}
       </div>
@@ -70,12 +82,17 @@ function SessionRow({
   session: s,
   onEnd,
   ending,
+  onExtend,
+  extendError,
 }: {
   session: OpsSessionOut;
   onEnd: () => void;
   ending: boolean;
+  onExtend: (minutes: number) => void;
+  extendError: string | null;
 }) {
   const [confirming, setConfirming] = useState(false);
+  const [extending, setExtending] = useState(false);
   const running = s.status === "active";
 
   // Remaining time is derived from the server's clock, not the browser's, so
@@ -116,6 +133,50 @@ function SessionRow({
         <span className="muted small block">{formatNaira(s.cost_kobo)}</span>
       </span>
 
+      {running && !confirming && !extending && (
+        <button
+          type="button"
+          className="btn btn-ghost btn-sm"
+          onClick={() => setExtending(true)}
+        >
+          Extend
+        </button>
+      )}
+
+      {running && extending && (
+        <span className="row ops-confirm">
+          {/* Fixed amounts rather than a free-text field: at a counter with
+              somebody waiting, "+15" is one tap and a typed number is three
+              and a mistake. */}
+          {[15, 30, 60].map((m) => (
+            <button
+              key={m}
+              type="button"
+              className="chip"
+              onClick={() => {
+                onExtend(m);
+                setExtending(false);
+              }}
+            >
+              +{m}m
+            </button>
+          ))}
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            onClick={() => setExtending(false)}
+          >
+            Cancel
+          </button>
+        </span>
+      )}
+
+      {extendError && (
+        <span className="error small ops-extend-error" role="alert">
+          {extendError}
+        </span>
+      )}
+
       {running &&
         (confirming ? (
           <span className="row ops-confirm">
@@ -134,13 +195,15 @@ function SessionRow({
         ) : (
           // Two taps, because this cuts power to something somebody is using
           // and there is no undo.
-          <button
-            type="button"
-            className="btn btn-ghost btn-sm"
-            onClick={() => setConfirming(true)}
-          >
-            End
-          </button>
+          !extending && (
+            <button
+              type="button"
+              className="btn btn-ghost btn-sm"
+              onClick={() => setConfirming(true)}
+            >
+              End
+            </button>
+          )
         ))}
     </div>
   );

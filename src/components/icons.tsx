@@ -226,3 +226,21 @@ export function WarnIcon({ className }: IconProps) {
     </svg>
   );
 }
+
+export function CounterIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <rect x="3" y="9" width="18" height="11" rx="2" />
+      <path d="M3 13h18M7 4h10l2 5H5l2-5z" />
+    </svg>
+  );
+}
+
+export function SearchIcon({ className }: IconProps) {
+  return (
+    <svg {...base} className={className}>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="m16 16 4.5 4.5" />
+    </svg>
+  );
+}
