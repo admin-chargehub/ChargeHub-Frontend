@@ -2,6 +2,7 @@ import { type FormEvent, useState } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
 
 import { useAuth } from "@/auth/AuthContext";
+import { homeFor } from "@/auth/home";
 import AppHeader from "@/components/AppHeader";
 import SplashScreen from "@/components/SplashScreen";
 
@@ -20,7 +21,8 @@ export default function LoginPage() {
   const [busy, setBusy] = useState(false);
 
   if (loading) return <SplashScreen />;
-  if (user) return <Navigate to="/" replace />;
+  // Operators land in the console, not the customer app.
+  if (user) return <Navigate to={homeFor(user)} replace />;
 
   const registering = mode === "register";
 

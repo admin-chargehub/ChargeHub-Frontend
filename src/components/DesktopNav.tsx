@@ -1,6 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 
 import { useAuth } from "@/auth/AuthContext";
+import { isOperator } from "@/auth/home";
 import { ThemeToggleButton } from "@/components/ThemeToggle";
 
 /**
@@ -69,6 +70,13 @@ export default function DesktopNav() {
         </nav>
 
         <div className="topnav-right">
+          {/* An operator is also a person who may book an outlet, so they are
+              allowed in here — but they need a way back out. */}
+          {isOperator(user) && (
+            <Link to="/ops" className="btn btn-ghost btn-sm">
+              Operator console
+            </Link>
+          )}
           <ThemeToggleButton />
           <Link to="/profile" className="topnav-avatar" aria-label="Your account">
             {initials}

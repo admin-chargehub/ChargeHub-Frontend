@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import { useAuth } from "@/auth/AuthContext";
+import { homeFor, isOperator } from "@/auth/home";
 import { MobileShell, TabbedShell } from "@/components/MobileShell";
 import SplashScreen from "@/components/SplashScreen";
 import ActiveSessionPage from "@/pages/ActiveSessionPage";
@@ -45,10 +46,15 @@ function RequireOperator({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth();
   if (loading) return <SplashScreen />;
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== "operator" && user.role !== "admin") {
-    return <Navigate to="/" replace />;
-  }
+  if (!isOperator(user)) return <Navigate to="/" replace />;
   return <>{children}</>;
+}
+
+/** An unknown path goes wherever this user belongs, not always the app. */
+function NotFound() {
+  const { user, loading } = useAuth();
+  if (loading) return <SplashScreen />;
+  return <Navigate to={homeFor(user)} replace />;
 }
 
 export default function App() {
@@ -110,7 +116,7 @@ export default function App() {
         <Route path="audit" element={<OpsAuditPage />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

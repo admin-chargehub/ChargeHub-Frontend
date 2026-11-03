@@ -1,4 +1,7 @@
+import { Link } from "react-router-dom";
+
 import { useAuth } from "@/auth/AuthContext";
+import { isOperator } from "@/auth/home";
 import { ThemeSegmented } from "@/components/ThemeToggle";
 import { formatWhen } from "@/lib/format";
 
@@ -28,6 +31,20 @@ export default function ProfilePage() {
           </span>
         </div>
       </section>
+
+      {/* The only route back to the console at phone width, where the desktop
+          top bar is hidden. */}
+      {isOperator(user) && (
+        <Link to="/ops" className="card card-link row-between ops-entry">
+          <span>
+            <strong>Operator console</strong>
+            <span className="muted small block">
+              Counter, hubs, sessions and reports
+            </span>
+          </span>
+          <span className="pill pill-ok">{user.role}</span>
+        </Link>
+      )}
 
       <section className="card">
         <h2>Appearance</h2>
