@@ -78,6 +78,19 @@ export default function OpsSessionsPage() {
   );
 }
 
+/**
+ * What to show as a way of contacting this customer.
+ *
+ * Walk-ins booked at the counter get a synthetic address on .invalid, which
+ * exists only to satisfy the unique-email constraint. Printing it would show
+ * the operator a mailbox that cannot receive anything and looks like a bug.
+ */
+function contactFor(s: OpsSessionOut): string {
+  if (s.customer_phone) return ` · ${s.customer_phone}`;
+  if (s.customer_email.endsWith(".invalid")) return " · booked at the counter";
+  return ` · ${s.customer_email}`;
+}
+
 function SessionRow({
   session: s,
   onEnd,
@@ -111,8 +124,8 @@ function SessionRow({
           {s.station_name} · {s.outlet_label}
         </strong>
         <span className="muted small block">
-          {s.customer_name} · {s.customer_email}
-          {s.customer_phone && ` · ${s.customer_phone}`}
+          {s.customer_name}
+          {contactFor(s)}
         </span>
         <span className="faint small block">
           Started {formatWhen(s.started_at)}
